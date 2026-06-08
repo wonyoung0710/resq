@@ -80,6 +80,7 @@ class _SafetyGuideScreenState extends State<SafetyGuideScreen> {
                     isExpanded: _expanded['earthquake']!,
                     onToggle: () => setState(
                         () => _expanded['earthquake'] = !_expanded['earthquake']!),
+                    imageAsset: 'assets/images/safety_en_earthquake.png',
                     tips: [
                       (lang.t('eq_tip1'), lang.t('eq_tip1_sub')),
                       (lang.t('eq_tip2'), lang.t('eq_tip2_sub')),
@@ -103,6 +104,7 @@ class _SafetyGuideScreenState extends State<SafetyGuideScreen> {
                     isExpanded: _expanded['rain']!,
                     onToggle: () => setState(
                         () => _expanded['rain'] = !_expanded['rain']!),
+                    imageAsset: 'assets/images/safety_en_rain.png',
                     tips: [
                       (lang.t('rain_tip1'), lang.t('rain_tip1_sub')),
                       (lang.t('rain_tip2'), lang.t('rain_tip2_sub')),
@@ -125,6 +127,7 @@ class _SafetyGuideScreenState extends State<SafetyGuideScreen> {
                     isExpanded: _expanded['fire']!,
                     onToggle: () => setState(
                         () => _expanded['fire'] = !_expanded['fire']!),
+                    imageAsset: 'assets/images/safety_en_fire.png',
                     tips: [
                       (lang.t('fire_tip1'), lang.t('fire_tip1_sub')),
                       (lang.t('fire_tip2'), lang.t('fire_tip2_sub')),
@@ -149,6 +152,7 @@ class _GuideCategory extends StatelessWidget {
   final bool isExpanded;
   final VoidCallback onToggle;
   final List<(String, String)> tips;
+  final String? imageAsset;
 
   const _GuideCategory({
     required this.id,
@@ -163,7 +167,96 @@ class _GuideCategory extends StatelessWidget {
     required this.isExpanded,
     required this.onToggle,
     required this.tips,
+    this.imageAsset,
   });
+
+  void _showImageDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierColor: Colors.black.withOpacity(0.7),
+      builder: (_) => Dialog(
+        backgroundColor: Colors.transparent,
+        insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 모달 헤더
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 14, 8, 0),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        color: iconBg,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(icon, color: iconColor, size: 14),
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                          color: titleColor,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon: const Icon(Icons.close,
+                          size: 20, color: Color(0xFF9AA5B4)),
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 10),
+              // 이미지
+              ClipRRect(
+                borderRadius: const BorderRadius.vertical(
+                  bottom: Radius.circular(16),
+                ),
+                child: Image.asset(
+                  imageAsset!,
+                  width: double.infinity,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Container(
+                    height: 200,
+                    color: const Color(0xFFf1f5f9),
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.image_not_supported_outlined,
+                              size: 40, color: Colors.grey[400]),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Image not found',
+                            style: TextStyle(
+                                color: Colors.grey[400], fontSize: 12),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -179,7 +272,8 @@ class _GuideCategory extends StatelessWidget {
           GestureDetector(
             onTap: onToggle,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
                 color: headerBg,
                 borderRadius: isExpanded
@@ -211,6 +305,38 @@ class _GuideCategory extends StatelessWidget {
                       ),
                     ),
                   ),
+                  // 사진 보기 버튼
+                  if (imageAsset != null) ...[
+                    GestureDetector(
+                      onTap: () => _showImageDialog(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: badgeBg,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.image_outlined,
+                                size: 11, color: titleColor),
+                            const SizedBox(width: 3),
+                            Text(
+                              'View guide',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w700,
+                                color: titleColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 6),
+                  ],
+                  // tips 개수 배지
                   Container(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 8, vertical: 3),
@@ -244,7 +370,8 @@ class _GuideCategory extends StatelessWidget {
           if (isExpanded)
             Container(
               decoration: const BoxDecoration(
-                border: Border(top: BorderSide(color: Color(0xFFe2e8f0))),
+                border:
+                    Border(top: BorderSide(color: Color(0xFFe2e8f0))),
               ),
               child: Column(
                 children: tips.asMap().entries.map((entry) {
@@ -254,7 +381,8 @@ class _GuideCategory extends StatelessWidget {
                     decoration: BoxDecoration(
                       border: i < tips.length - 1
                           ? const Border(
-                              bottom: BorderSide(color: Color(0xFFf1f5f9)))
+                              bottom:
+                                  BorderSide(color: Color(0xFFf1f5f9)))
                           : null,
                     ),
                     padding: const EdgeInsets.fromLTRB(30, 8, 12, 8),
@@ -262,7 +390,8 @@ class _GuideCategory extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Padding(
-                          padding: const EdgeInsets.only(top: 5, right: 8),
+                          padding:
+                              const EdgeInsets.only(top: 5, right: 8),
                           child: Container(
                             width: 5,
                             height: 5,
