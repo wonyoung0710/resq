@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 
 class ApiClient {
   // 웹/iOS 시뮬레이터: localhost  /  Android 에뮬레이터: 10.0.2.2  /  실기기: 컴퓨터 IP
-  static const String baseUrl = 'http://172.30.115.220:3000/api';
+  static const String baseUrl = 'https://resq-backend-production.up.railway.app';
 
   static const Duration _timeout = Duration(seconds: 10);
 

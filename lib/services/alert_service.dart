@@ -52,12 +52,25 @@ class AlertModel {
 
   bool get isActive => status == 'ACTIVE';
 
-  // 번역된 텍스트로 새 AlertModel 생성
+  String get timeAgo {
+    try {
+      final dt = DateTime.parse(issuedAt);
+      final diff = DateTime.now().difference(dt);
+      if (diff.inMinutes < 60) return '${diff.inMinutes}m ago';
+      if (diff.inHours < 24) return '${diff.inHours}h ago';
+      if (diff.inDays == 1) return 'Yesterday';
+      return '${diff.inDays} days ago';
+    } catch (_) {
+      return '';
+    }
+  }
+
   AlertModel copyWith({
     String? title,
     String? content,
     String? actionGuide,
-  }) => AlertModel(
+  }) =>
+      AlertModel(
         id: id,
         regionCode: regionCode,
         regionName: regionName,
@@ -93,40 +106,48 @@ class AlertCategory {
 }
 
 // ── 번역 캐시 ─────────────────────────────────────────────────
-// {langCode: {alertId: AlertModel}}
 final Map<String, Map<int, AlertModel>> _translateCache = {};
 
 // ── 서비스 ────────────────────────────────────────────────────
 class AlertService {
 
-  /// Google Translate 비공식 API로 단일 텍스트 번역
+  /// Google Translate API (한국어 → 목표언어)
   static Future<String> _translateText(String text, String targetLang) async {
-    if (text.isEmpty || targetLang == 'en') return text;
-    try {
-      final uri = Uri.parse(
-        'https://translate.googleapis.com/translate_a/single'
-        '?client=gtx&sl=en&tl=$targetLang&dt=t&q=${Uri.encodeComponent(text)}',
-      );
-      final res = await http.get(uri).timeout(const Duration(seconds: 5));
-      if (res.statusCode == 200) {
-        final data = jsonDecode(res.body);
-        // 응답 구조: [[["번역된텍스트","원본",...],...],...]
-        final buffer = StringBuffer();
-        for (final item in data[0]) {
-          if (item[0] != null) buffer.write(item[0]);
+    if (text.isEmpty) return text;
+    for (int attempt = 0; attempt < 3; attempt++) {
+      try {
+        final uri = Uri.parse(
+          'https://translate.googleapis.com/translate_a/single'
+          '?client=gtx&sl=ko&tl=$targetLang&dt=t'
+          '&q=${Uri.encodeComponent(text)}',
+        );
+        final res = await http.get(uri).timeout(const Duration(seconds: 8));
+        if (res.statusCode == 200) {
+          final data = jsonDecode(res.body);
+          final buffer = StringBuffer();
+          for (final item in data[0]) {
+            if (item[0] != null) buffer.write(item[0]);
+          }
+          final result = buffer.toString();
+          if (result.isNotEmpty) return result;
         }
-        return buffer.toString();
+      } catch (_) {
+        if (attempt < 2) {
+          await Future.delayed(const Duration(milliseconds: 300));
+        }
       }
-    } catch (_) {}
-    return text; // 실패 시 원본 반환
+    }
+    return text;
   }
 
-  /// 알림 목록 조회 + 필요 시 번역
-  static Future<List<AlertModel>> fetchAlerts({
+  /// 번역하면서 배치마다 콜백으로 즉시 업데이트
+  /// → 화면에 번역되는 즉시 표시됨
+  static Future<void> fetchAlertsWithCallback({
+    String lang = 'en',
     String? regionCode,
     String? categoryCode,
     String? status,
-    String lang = 'en',
+    required void Function(List<AlertModel>) onUpdate,
   }) async {
     final params = <String, String>{'lang': lang};
     if (regionCode   != null) params['region_code']   = regionCode;
@@ -137,43 +158,86 @@ class AlertService {
     final list = res['alerts'] as List<dynamic>? ?? [];
     final alerts = list.map((e) => AlertModel.fromJson(e)).toList();
 
-    // 영어면 번역 불필요
-    if (lang == 'en') return alerts;
+    // 원본(한국어) 먼저 즉시 전달
+    final result = List<AlertModel>.from(alerts);
+    onUpdate(List.from(result));
 
     // 캐시 확인
     final cached = _translateCache[lang];
 
-    final List<AlertModel> translated = [];
-    for (final alert in alerts) {
-      // 캐시에 있으면 바로 사용
-      if (cached != null && cached.containsKey(alert.id)) {
-        translated.add(cached[alert.id]!);
-        continue;
+    // 5개씩 병렬 번역
+    const batchSize = 5;
+    for (int i = 0; i < alerts.length; i += batchSize) {
+      final batch = alerts.sublist(
+        i, (i + batchSize).clamp(0, alerts.length),
+      );
+
+      final futures = batch.map((alert) async {
+        // 캐시 있으면 즉시 반환
+        if (cached != null && cached.containsKey(alert.id)) {
+          return MapEntry(alert.id, cached[alert.id]!);
+        }
+
+        // 번역 API 호출
+        try {
+          final results = await Future.wait([
+            _translateText(alert.title, lang),
+            _translateText(alert.content, lang),
+            _translateText(alert.actionGuide, lang),
+          ]);
+          final translated = alert.copyWith(
+            title:       results[0],
+            content:     results[1],
+            actionGuide: results[2],
+          );
+          _translateCache[lang] ??= {};
+          _translateCache[lang]![alert.id] = translated;
+          return MapEntry(alert.id, translated);
+        } catch (_) {
+          return MapEntry(alert.id, alert);
+        }
+      });
+
+      final batchResults = await Future.wait(futures);
+
+      // 배치 완료마다 결과 반영 후 즉시 화면 업데이트
+      for (final entry in batchResults) {
+        final idx = result.indexWhere((a) => a.id == entry.key);
+        if (idx != -1) result[idx] = entry.value;
       }
-
-      // 캐시 없으면 번역 API 호출
-      try {
-        final tTitle = await _translateText(alert.title, lang);
-        final tContent = await _translateText(alert.content, lang);
-        final tAction = await _translateText(alert.actionGuide, lang);
-
-        final translatedAlert = alert.copyWith(
-          title: tTitle,
-          content: tContent,
-          actionGuide: tAction,
-        );
-
-        // 캐시 저장
-        _translateCache[lang] ??= {};
-        _translateCache[lang]![alert.id] = translatedAlert;
-        translated.add(translatedAlert);
-      } catch (_) {
-        // 번역 실패 시 원본 사용
-        translated.add(alert);
-      }
+      onUpdate(List.from(result)); // ← 배치마다 화면 갱신
     }
+  }
 
-    return translated;
+  /// 기존 호환용 (캐시된 것만 반환, 번역 없음)
+  static Future<List<AlertModel>> fetchAlerts({
+    String lang = 'en',
+    String? regionCode,
+    String? categoryCode,
+    String? status,
+  }) async {
+    final params = <String, String>{'lang': lang};
+    if (regionCode   != null) params['region_code']   = regionCode;
+    if (categoryCode != null) params['category_code'] = categoryCode;
+    if (status       != null) params['status']        = status;
+
+    final res = await ApiClient.get('/alerts', queryParams: params);
+    final list = res['alerts'] as List<dynamic>? ?? [];
+    return list.map((e) => AlertModel.fromJson(e)).toList();
+  }
+
+  /// 캐시 확인
+  static bool isCached(String lang, int alertId) {
+    return _translateCache[lang]?.containsKey(alertId) ?? false;
+  }
+
+  /// 번역 캐시 초기화
+  static void clearCache([String? lang]) {
+    if (lang != null) {
+      _translateCache.remove(lang);
+    } else {
+      _translateCache.clear();
+    }
   }
 
   /// 알림 상세 조회

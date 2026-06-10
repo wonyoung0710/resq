@@ -1,9 +1,7 @@
 국기	공관명	주소	우편번호	전화번호	이메일	팩스번호	주한공관 유형
-🌐	WHO Asia Center for Environment and Health	11th floor, Seoul Global Center, Jongno 38, Jongno-gu, Seoul 38     ۷ι      11  	3188	739-8730	wproace@who.int	739-8731	    
 🇬🇭	Ghana	120, Dokseodang-ro, Yongsan-gu, CPO Box 3887, Seoul	4420	3785-1427, 749-8982/3	ghanaembassy.seoul.kr@gmail.com	3785-1428	    
 🇳🇿	New Zealand	8F, Jeongdong Bldg., 21-15 Jeongdong-gil, Jung-gu, Seoul	4518	3701-7700	nzembsel@mfat.net	3701-7701	    
 🇸🇪	Sweden	8F, Danam Building, 10, Sowol-ro, Jung-gu, Seoul	4527	3703-3700	ambassaden.seoul@gov.se	3703-3701	    
-🌐	UNDP Seoul Policy Centre	4F, International Studies Hall, Korea Univ., 145, Anam-ro, Seongbuk-gu, Seoul	2841	3290-5202/9	info.kr@undp.org	3290-5210	    
 🇰🇭	Cambodia	14F. Booyoung Taepyeong Bldg, Sejongdaero 55, Jung-gu, Seoul	4513	3785-1046	camemb.kor@mfaic.gov.kh	3785-1040	    
 🇨🇦	Canada	21, Jeongdong-gil, Jung-gu, Seoul	4518	3783-6000	seoul@international.gc.ca	3783-6239	    
 🇰🇪	Kenya	38, Hoenamuro 44-gil, Yongsan-gu, Seoul	4346	3785-2903/4	info@kenya-embassy.or.kr	3785-2905	    
@@ -14,22 +12,15 @@
 🇯🇵	Consulate-General of Japan in Busan	18, Gogwan-ro, Dong-gu, Busan	48792	051)465-5104/5/6	cultural@pz.mofa.go.jp	051)464-1630	    
 🇵🇬	Papua New Guinea	#210, Doosan We  ve Pavilion Building, 81, Sambong-ro, Jongno-gu, Seoul	3150	2198-5771/2/3/4	pngembassy@kunduseoul.kr	2198-5780	    
 🇨🇩	Democratic Republic of the Congo	73-1, Hoenamu-ro, Yongsan-gu, Seoul	4344	722-7958	congokoreaembassy@gmail.com	722-7998	    
-🌐	WHO Asia Center for Environment and Health	11F, Seoul Global Center, 38, Jong-ro, Jongno-gu, Seoul	3188	528-8001	zhuangy@who.int	521-1036	    
 🇬🇦	Gabon	4F, Yoosung Bldg., 239, Itaewon-ro, Yongsan-gu, Seoul	4348	793-9575/6	amgabsel@unitel.co.kr	793-9574	    
 🇬🇹	Guatemala	20F, Booyoung Taepyeong Bldg., Sejong-daero 55, Jung-gu, Seoul	4533	771-7582/3	embcorea@minex.gob.gt	771-7584	    
 🇻🇦	Holy See	19, Jahamun-ro 26-gil, Jongro-gu, Seoul	3047	736-5725 / 739-2310	anunciaturekr@gmail.com	736-5738	    
-🌐	International Vaccine Institute	1, Gwanak-ro, Gwanak-gu, Seoul	8826	872-2801	iviinfo@ivi.int	872-1228	    
-🌐	UNCITRAL Asia-Pacific Centre	3F, G-Tower, 175 Art Center-daero, Yeonsu-gu, Incheon	22004	032)458-6540	uncitral.rcap@un.org	032)458-6549	    
-🌐	International Organization for Migration	#1301, 13F, Hyoryung Bldg., 32 Mugyo-ro, Jung-gu, Seoul	4521	6925-1360	iomseoul@iom.or.kr	6925-1361	    
-🌐	ICRC Seoul Office	#503, Coryo Daeyungak Tower, 97, Toegye-ro, Jung-gu, Seoul	4535	779-5375	seo_seoul@icrc.org	779-5376	    
 🇬🇷	Greece	27F. Hanwha Bldg., 86 Cheonggyecheon-ro, Jung-gu, Seoul	4541	729-1400/1	gremb.sel@mfa.gr / greekemb@naver.com	729-1402	    
-🌐	Global Green Growth Institute	19F, Jeongdong Bldg., 21-15, Jeongdong-gil, Jung-gu, Seoul	4518	2096-9991	info@gggi.org  /  governance@gggi.org	2096-9990	    
 🇳🇬	Nigeria	13, Jangmunro 6-gil, Yongsan-gu, Seoul	4393	797-2370 / 3280	chancery@nigerianembassy.or.kr	796-1848	    
 🇿🇦	South Africa	104, Dokseodang-ro, Yongsan-gu, Seoul	4420	2077-5900	admin.seoul@dirco.gov.za / political.seoul@dirco.gov.za	792-4856	    
 🇳🇱	Netherlands	10F, Jeongdong Bldg., 21-15 Jeongdong-gil, Jung-gu, Seoul	4518	311-8600	seo@minbuza.nl ; seo-az@minbuza.nl	311-8650	    
 🇳🇵	Nepal	19, Seonjam-ro 2gil, Seongbuk-gu, Seoul	2823	3789-9770/1	nepembseoul2015@gmail.com	736-8848	    
 🇳🇴	Norway	13F, Jeongdong Bldg., 21-15 Jeongdong-gil, Jung-gu, Seoul	4518	727-7100	emb.seoul@mfa.no	727-7199	    
-🌐	Green Climate Fund	14F, G-tower, 175 Art Center-daero, Yeonsu-gu, Incheon	22004	032)458-6059	secretariat@gcfund.org	032-458-6094	    
 🇳🇮	Nicaragua	8F, Danam Tower, 10, Sowol-ro, Jung-gu, Seoul	4527	6272-1670	nicaseoul@gmail.com	6272-1671	    
 🇩🇰	Denmark	11F, Seoul Square Bldg., 416 Hangang-daero, Jung-gu, Seoul	4637	795-4187	selamb@um.dk	796-0986	    
 🇩🇴	Dominican Republic	19F, Taepyungro Bldg, 73, Sejong-daero, Jung-gu, Seoul	4514	756-3513	info@embadomkr.gob.do	756-3514	    
@@ -59,8 +50,6 @@
 🇧🇷	Brazil	73 Cheongwadaero, Jongro-gu, Seoul	3054	738-4970	ambassador.seul@itamaraty.gov.br	738-4974	    
 🇧🇳	Brunei	133, Jahamun-ro, Jongno-gu, Seoul	3031	790-1078/9	seoul.korea@mfa.gov.bn / brunei.korea@gmail.com	790-1084	    
 🇸🇦	Kingdom of Saudi Arabia	37, Noksapyeong-daero 26-gil, Yongsan-gu, Seoul	4390	2022-7400	ksaemb.kr@gmail.com	739-0041	    
-🌐	World Health Organization	#512, College of Medicine Medical Science Bldg., SNU, 103 Daehak-ro, Jongno-gu, Seoul	3080	744-7592	who.liaison.korea@gmail.com	743-2009	    
-🌐	World Bank Group Korea Office	37F, Tower 2, Booyoung Songdo Tower, 241, Incheon Tower-daero, Yeonsu-gu, Incheon	22009	032)713-7000	mjkang@worldbank.org	032)713-7040	    
 🇸🇳	Senegal	#501, Coryo Daeyungak Tower, 97 Teogyero, Jung-gu, Seoul	4535	745-5554	senegalembassyseoul@gmail.com	745-5524	    
 🇷🇸	Serbia	22nd Floor, Booyoung Taepyeong Building, 55 Sejong-daero, Jung-gu, Seoul	4513	797-5109	embserbseul@yahoo.com	790-6109	    
 🇸🇩	Sudan	3F, Vivien Bldg., Seobinggoro-51gil 52, Yongsan-gu, Seoul	4384	793-8692	embsudankr@gmail.com	793-8693	    
@@ -72,7 +61,6 @@
 🇸🇬	Singapore	28F, Seoul Finance Center, 136, Sejong-daero, Jung-gu, Seoul	4520	774-2464	singemb_seo@mfa.sg	773-2465	    
 🇦🇪	United Arab Emirates	118 ,Dokseodang-ro, Yongsan-gu, Seoul	4420	790-3235/7	seoulEMB@mofa.gov.ae	790-3238	    
 🇦🇷	Argentina	5F, Chunwoo Bldg., 206, Noksapyeong-daero, Yongsan-gu, Seoul	4345	796-8144	ecoresec@mrecic.gov.ar	792-5820	    
-🌐	Asian Forest Cooperation Organization	8F, 9 Gukhoedaero-62gil, Yeongdeungpo-gu, Seoul, Republic of Korea	7236	785-8971	secretariat@afocosec.org	785-8970	    
 🇮🇪	Ireland	13F, Leema Bldg., 42 Jongro 1-gil, Jongno-gu, Seoul	3152	721-7200	seoulembassy@dfa.ie	774-6458	    
 🇦🇿	Azerbaijan	63, Itaewon-ro 45-gil, Yongsan-gu, Seoul	4348	797-1765/6	azembseoul@gmail.com	797-1767	    
 🇦🇫	Afghanistan	90, Dokseodang-ro, Yongsan-gu, Seoul	4420	793-3535	seoul@mfa.af	795-2662	    
@@ -84,26 +72,12 @@
 🇬🇧	United Kingdom	24, Sejong-daero 19-gil, Jung-gu, Seoul	4519	3210-5500	enquiry.seoul@fco.gov.uk	725-1738	    
 🇴🇲	Oman	9, Saemunan-ro 3-gil, Jongno-gu, Seoul	3175	790-2431/2	oman.kr@gmail.com	790-2430	    
 🇦🇹	Austria	21F, Kyobo Bldg., Jong-ro 1, Jongno-gu, Seoul	3154	721-1700	seoul-ob@bmeia.gv.at	732-9486	    
-🌐	OECD FATF Training Institute	BIFC 53F, 40 Munhyeongeumyung-ro, Nam-gu, Busan	608-828	051)607-5002	Sangji.WON@fatf-gafi.org	051)631-8867	    
 🇭🇳	Honduras	9F, Cheonggye Hangook Bldg., 11 Cheongyechon-ro, Jongro-gu, Seoul	3187	738-8402	embassy@hondurasembassykr.com	738-8403	    
 🇯🇴	Jordan	6F, Twin Tree Tower B, 6, Yulgok-ro, Jongno-gu, Seoul	3142	318-2897/8	seoul@fm.gov.jo	318-3644	    
 🇺🇾	Uruguay	#706 Coryodaeyungak Tower, 97 Toegye-ro, Jung-gu, Seoul	4535	6245-3179/3180	urucoreadelsur@mrree.gub.uy	6245-3181	    
 🇺🇿	Uzbekistan	27, Daesagwan-ro 11-gil, Yongsan-gu, Seoul	4400	574-6554	uz.embassy.seoul@gmail.com	578-0576	    
 🇺🇦	Ukraine	21, Itaewon-ro 45-gil, Yongsan-gu, Seoul	4349	790-5696	emb_kr@mfa.gov.ua	790-5697/61	    
-🌐	UNICEF Seoul Office	8F, Seoul Global Center, 38 Jong-ro, Jongno-gu, Seoul	3188	720-5488	seoul@unicef.org	720-5483	    
 🇪🇺	European Union	11F, Seoul Square, 416 Hangang-daero, Jung-gu, Seoul, Korea	4637	3704-1701	delegation-rep-of-Korea@eeas.europa.eu	739-3514	    
-🌐	World Food Programme	#301, Lotte International Centre 152-1, SNU, 1 Gwanak-ro, Gwanak-gu, Seoul	8826	722-9579	wfp.korea@wfp.org	722-7005	    
-🌐	UN ESCAP Subregional Office for East and North-East Asia	7F, G -Tower, 175, Art Center-daero, Yeonsu-gu, Incheon	22004	032)458-6600	escap-sroenea-registry@un.org	032)458-6699	    
-🌐	UN APCICT	5F, G-Tower, 175, Art Center-daero, Yeonsu-gu, Incheon	22004	032)458-6650	apcict@un.org	032)458-6691/2	    
-🌐	United Nations Project Office on Governance	8F, G-Tower, 175, Art Center-daero, Yeonsu-gu, Incheon	22004	032)859-8600	wooyoung.kim@un.org	032)859-8803	    
-🌐	UNIDO Seoul Investment and Technology Promotion Office	#411, 153 Bldg., Seoul National University, 1, Gwanak-ro, Gwanak-gu, Seoul	8826	794-8191/2/3	itpo.seoul@unido.org	794-8194	    
-🌐	UN Memorial Cemetery in Korea	93, UN Pyeonghwa-ro, Nam-gu, Busan	48529	051)625-0625	unmck@unmck.or.kr	051)624-2165	    
-🌐	UNHCR	7F, Kumsegi Bldg., 6 Mukyo-ro, Jung-gu, Seoul	4523	773-7011	unhcr@unhcr.or.kr	773-7014	    
-🌐	FAO Korea Partnership and Liaison Office	8F, Seoul Global Center, 38, Jong-ro, Jongno-gu, Seoul	3188		fao-kr@fao.org		    
-🌐	OHCHR	8F, Seoul Global Center, 38 Jong-ro, Jongno-gu, Seoul	3188	725-3520	seoul@ohchr.org	725-3529	    
-🌐	UNDRR	4F, G-Tower, 175, Art Center-daero, Yeonsu-gu, Incheon	22004	032)458-6570/6551	isdr-incheon@un.org	032-458-6598/9	    
-🌐	UNOSD	#205, Libertas Hall A, Yonsei University International Campus, 85 Songdo Gwahak-ro, Yeonsu-gu, Incheon	21983	032)822-9088	unosd@un.org	032)822-9089	    
-🌐	NOWPAP UNEP	216, Gijanghaean-ro, Gijang-eup, Gijang-gun, Busan	46083	051)720-3003	ning.liu@unep.org	051)720-3009	    
 🇮🇶	Iraq	55, Jangmun-ro, Yongsan-gu, Seoul	4392	790-4202/3/4	seoemb@mofa.gov.iq	790-4206	    
 🇮🇷	Iran	45, Jangmun-ro, Yongsan-gu, Seoul	4392	793-7751/2/3	iranssy@chol.com	792-7052	    
 🇮🇱	Israel	18F, Cheonggye 11 Bldg., 11 Cheonggyecheon-ro, Jongno-gu, Seoul	3187	3210-8500	info@seoul.mfa.gov.il	3210-8555	    
@@ -145,7 +119,5 @@
 🇫🇯	Fiji	2F, 64 Hoenamu-ro, Yongsan-gu, Seoul	4346	792-6396	info@fijiembassy.co.kr	792-6397	    
 🇫🇮	Finland	18F, Kyobo Bldg., Jong-ro 1, Jongno-gu, Seoul	3154	3701-0300	sanomat.seo@formin.fi	723-4969	    
 🇵🇭	Philippines	80 Hoenamu-ro, Yongsan-gu, Seoul	4346	796-7387/8/9	seoulpe@philembassy-seoul.com	796-0827	    
-🌐	ASEAN-Korea Centre	8F, Press Centre Bldg., 124 Sejong-daero, Jung-gu, Seoul	4520	2287-1115	akc_er@aseankorea.org	2287-1160	    
-🌐	Trilateral Cooperation Secretariat	15F & 20F, S-Tower, 82, Saemunan-ro, Jongno-gu, Seoul	3185	733-4700	tcs@tcs-asia.org	733-2525	    
 🇭🇺	Hungary	58 Jangmun-ro, Yongsan-gu, Seoul	4393	792-2105	mission.sel@mfa.gov.hu	792-2109	    
 🇦🇺	Australia	19F, Kyobo Bldg., Jong-ro 1, Jongro-gu, Seoul	3154	2003-0100	seoul-inform@dfat.gov.au	2003-0196	    

@@ -5,10 +5,9 @@ import '../../services/alert_service.dart';
 
 const Color kNavy = Color(0xFF1B2F6E);
 
-// ── 카테고리 정의 (고정) ──────────────────────────────────────
 class _Category {
   final String code;
-  final String labelKey;  // app_strings 키
+  final String labelKey;
   final Color color;
 
   const _Category({
@@ -19,14 +18,14 @@ class _Category {
 }
 
 const List<_Category> kCategories = [
-  _Category(code: 'ALL',        labelKey: 'filter_all',        color: kNavy),
-  _Category(code: 'RAIN',       labelKey: 'filter_rain',       color: Color(0xFF1565C0)),
-  _Category(code: 'FLOOD',      labelKey: 'filter_flood',      color: Color(0xFF0277BD)),
+  _Category(code: 'ALL', labelKey: 'filter_all', color: kNavy),
+  _Category(code: 'RAIN', labelKey: 'filter_rain', color: Color(0xFF1565C0)),
+  _Category(code: 'FLOOD', labelKey: 'filter_flood', color: Color(0xFF0277BD)),
   _Category(code: 'EARTHQUAKE', labelKey: 'filter_earthquake', color: Color(0xFFBF360C)),
-  _Category(code: 'FIRE',       labelKey: 'filter_fire',       color: Color(0xFFE53935)),
-  _Category(code: 'SNOW',       labelKey: 'filter_snow',       color: Color(0xFF5C6BC0)),
-  _Category(code: 'LANDSLIDE',  labelKey: 'filter_landslide',  color: Color(0xFF6D4C41)),
-  _Category(code: 'OTHER',      labelKey: 'filter_other',      color: Color(0xFF546E7A)),
+  _Category(code: 'FIRE', labelKey: 'filter_fire', color: Color(0xFFE53935)),
+  _Category(code: 'SNOW', labelKey: 'filter_snow', color: Color(0xFF5C6BC0)),
+  _Category(code: 'LANDSLIDE', labelKey: 'filter_landslide', color: Color(0xFF6D4C41)),
+  _Category(code: 'OTHER', labelKey: 'filter_other', color: Color(0xFF546E7A)),
 ];
 
 class AlertsPage extends StatefulWidget {
@@ -39,42 +38,78 @@ class AlertsPage extends StatefulWidget {
 class _AlertsPageState extends State<AlertsPage> {
   List<AlertModel> _alerts = [];
   String _selectedCategory = 'ALL';
-  bool   _isLoading = true;
+  bool _isLoading = true;
+  bool _isTranslating = false;
   String? _error;
   String _lastLang = '';
 
   @override
-void initState() {
-  super.initState();
-  setState(() => _isLoading = true); // ← 추가
-  _loadAll();
-}
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentLang = context.read<LanguageProvider>().currentLang;
+      _lastLang = currentLang;
+      _loadAll();
+    });
+  }
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final currentLang = context.read<LanguageProvider>().currentLang;
-    if (_lastLang != currentLang && _lastLang.isNotEmpty) {
+
+    final currentLang = context.watch<LanguageProvider>().currentLang;
+
+    if (_lastLang.isNotEmpty && _lastLang != currentLang) {
       _lastLang = currentLang;
+
+      // 언어 변경 시 기존 번역 캐시 제거
+      AlertService.clearCache(currentLang);
+
       _loadAll();
-    } else {
-      _lastLang = currentLang;
     }
   }
 
   Future<void> _loadAll() async {
-  setState(() { _error = null; }); // ← _isLoading = true 제거
-  try {
-    final lang = context.read<LanguageProvider>().currentLang;
-    final alerts = await AlertService.fetchAlerts(lang: lang);
-    setState(() {
-      _alerts = alerts;
-      _isLoading = false;
-    });
-  } catch (e) {
-    setState(() { _error = e.toString(); _isLoading = false; });
+    final currentLang = context.read<LanguageProvider>().currentLang;
+    _lastLang = currentLang;
+
+    if (mounted) {
+      setState(() {
+        _error = null;
+        _isLoading = true;
+        _isTranslating = currentLang != 'ko';
+      });
+    }
+
+    try {
+      await AlertService.fetchAlertsWithCallback(
+        lang: currentLang,
+        onUpdate: (alerts) {
+          if (!mounted) return;
+
+          setState(() {
+            _alerts = alerts;
+            _isLoading = false;
+          });
+        },
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _error = e.toString();
+        _isLoading = false;
+        _isTranslating = false;
+      });
+    }
+
+    if (mounted) {
+      setState(() {
+        _isTranslating = false;
+      });
+    }
   }
-}
 
   List<AlertModel> get _filtered {
     if (_selectedCategory == 'ALL') return _alerts;
@@ -91,16 +126,32 @@ void initState() {
         backgroundColor: kNavy,
         elevation: 0,
         titleSpacing: 20,
-        title: Text(
-          lang.t('nav_alerts'),
-          style: const TextStyle(
-            color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold,
-          ),
+        title: Row(
+          children: [
+            Text(
+              lang.t('nav_alerts'),
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            if (_isTranslating) ...[
+              const SizedBox(width: 10),
+              const SizedBox(
+                width: 16,
+                height: 16,
+                child: CircularProgressIndicator(
+                  color: Colors.white60,
+                  strokeWidth: 2,
+                ),
+              ),
+            ],
+          ],
         ),
       ),
       body: Column(
         children: [
-          // ── 필터 칩 ───────────────────────────────────────
           Container(
             color: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
@@ -109,6 +160,7 @@ void initState() {
               child: Row(
                 children: kCategories.map((cat) {
                   final isSelected = _selectedCategory == cat.code;
+
                   return Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: _FilterChip(
@@ -117,18 +169,19 @@ void initState() {
                       activeColor: cat.code == 'ALL'
                           ? kNavy
                           : cat.color.withValues(alpha: 0.15),
-                      activeTextColor: cat.code == 'ALL'
-                          ? Colors.white
-                          : cat.color,
-                      onTap: () => setState(() => _selectedCategory = cat.code),
+                      activeTextColor:
+                          cat.code == 'ALL' ? Colors.white : cat.color,
+                      onTap: () {
+                        setState(() {
+                          _selectedCategory = cat.code;
+                        });
+                      },
                     ),
                   );
                 }).toList(),
               ),
             ),
           ),
-
-          // ── 본문 ─────────────────────────────────────────
           Expanded(child: _buildBody(lang)),
         ],
       ),
@@ -157,13 +210,19 @@ void initState() {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.wifi_off_outlined, color: Color(0xFFCBD5E0), size: 48),
+            const Icon(
+              Icons.wifi_off_outlined,
+              color: Color(0xFFCBD5E0),
+              size: 48,
+            ),
             const SizedBox(height: 12),
             Text(
               lang.t('alerts_connection_error'),
               textAlign: TextAlign.center,
               style: const TextStyle(
-                color: Color(0xFF9AA5B4), fontSize: 13, height: 1.6,
+                color: Color(0xFF9AA5B4),
+                fontSize: 13,
+                height: 1.6,
               ),
             ),
             const SizedBox(height: 20),
@@ -189,7 +248,11 @@ void initState() {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.notifications_none, color: Color(0xFFCBD5E0), size: 48),
+            const Icon(
+              Icons.notifications_none,
+              color: Color(0xFFCBD5E0),
+              size: 48,
+            ),
             const SizedBox(height: 12),
             Text(
               lang.t('alerts_empty'),
@@ -207,16 +270,14 @@ void initState() {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         itemCount: _filtered.length,
         separatorBuilder: (_, __) => const SizedBox(height: 10),
-        itemBuilder: (context, index) => _AlertCard(
-          item: _filtered[index],
-          lang: lang,
-        ),
+        itemBuilder: (context, index) {
+          return _AlertCard(item: _filtered[index], lang: lang);
+        },
       ),
     );
   }
 }
 
-// ── 필터 칩 ───────────────────────────────────────────────────
 class _FilterChip extends StatelessWidget {
   final String label;
   final bool selected;
@@ -259,11 +320,14 @@ class _FilterChip extends StatelessWidget {
   }
 }
 
-// ── 알림 카드 ─────────────────────────────────────────────────
 class _AlertCard extends StatelessWidget {
   final AlertModel item;
   final LanguageProvider lang;
-  const _AlertCard({required this.item, required this.lang});
+
+  const _AlertCard({
+    required this.item,
+    required this.lang,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -274,7 +338,9 @@ class _AlertCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border(left: BorderSide(color: borderColor, width: 4)),
+        border: Border(
+          left: BorderSide(color: borderColor, width: 4),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.04),
@@ -295,24 +361,29 @@ class _AlertCard extends StatelessWidget {
                   child: Text(
                     item.title,
                     style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.bold,
-                      color: kNavy, height: 1.4,
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: kNavy,
+                      height: 1.4,
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   _formatTime(item.issuedAt),
-                  style: const TextStyle(fontSize: 12, color: Color(0xFF9AA5B4)),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: Color(0xFF9AA5B4),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                // 심각도/카테고리 태그
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: borderColor.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(6),
@@ -322,14 +393,16 @@ class _AlertCard extends StatelessWidget {
                         ? item.severityLabel
                         : item.categoryLabel,
                     style: TextStyle(
-                      color: borderColor, fontSize: 11, fontWeight: FontWeight.w700,
+                      color: borderColor,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
                     ),
                   ),
                 ),
                 const SizedBox(width: 6),
-                // Active / Resolved 뱃지
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                   decoration: BoxDecoration(
                     color: isActive
                         ? const Color(0xFFFFEEEE)
@@ -356,7 +429,8 @@ class _AlertCard extends StatelessWidget {
                         ? item.actionGuide
                         : item.content,
                     style: const TextStyle(
-                      fontSize: 13, color: Color(0xFF718096),
+                      fontSize: 13,
+                      color: Color(0xFF718096),
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -374,10 +448,13 @@ class _AlertCard extends StatelessWidget {
     try {
       final dt = DateTime.parse(issuedAt);
       final diff = DateTime.now().difference(dt);
+
       if (diff.inDays == 0) {
         return '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
       }
+
       if (diff.inDays == 1) return 'Yesterday';
+
       return '${diff.inDays} days ago';
     } catch (_) {
       return issuedAt;

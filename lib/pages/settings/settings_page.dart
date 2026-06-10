@@ -188,7 +188,7 @@ class _SettingsPageState extends State<SettingsPage> {
                           iconBg: const Color(0xFFE3F2FD),
                           iconColor: const Color(0xFF1E88E5),
                           title: lang.t('app_version'),
-                          subtitle: 'SafeKorea',
+                          subtitle: 'resQ',
                           trailing: 'v1.0.0',
                         ),
                       ],
@@ -231,8 +231,8 @@ class _LanguagePickerSheet extends StatelessWidget {
     final lang = context.watch<LanguageProvider>();
 
     return DraggableScrollableSheet(
-      initialChildSize: 0.6,
-      minChildSize: 0.4,
+      initialChildSize: 0.7,
+      minChildSize: 0.5,
       maxChildSize: 0.9,
       expand: false,
       builder: (context, scrollController) {
@@ -241,7 +241,7 @@ class _LanguagePickerSheet extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.fromLTRB(
               24, 16, 24,
-              MediaQuery.of(context).viewInsets.bottom + 32,
+              MediaQuery.of(context).viewInsets.bottom + 80,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
