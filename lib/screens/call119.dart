@@ -163,17 +163,6 @@ class Call119Screen extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
 
-                  // 병원
-                  _EmergencyRow(
-                    iconBg: const Color(0xFFfff7ed),
-                    icon: Icons.local_hospital_outlined,
-                    iconColor: const Color(0xFFea580c),
-                    title: lang.t('nearby_hospitals'),
-                    subtitle: lang.t('nearby_hospitals_sub'),
-                    onTap: () {},
-                  ),
-                  const SizedBox(height: 16),
-
                   // 팁 카드
                   Container(
                     width: double.infinity,
