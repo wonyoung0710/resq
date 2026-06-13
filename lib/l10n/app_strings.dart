@@ -113,5 +113,49 @@ class AppStrings {
     'alerts_connection_error': 'Cannot connect to server.',
     'alerts_empty':            'No alerts found.',
     'retry':                   'Retry',
+
+    // ===== Safety Guide =====
+    'guide_earthquake': 'Earthquake',
+    'guide_rain': 'Heavy Rain & Flood',
+    'guide_fire': 'Fire',
+    'Drop & Stay Calm': 'Drop & Stay Calm',
+    'When shaking starts, drop down and watch for falling objects':
+        'When shaking starts, drop down and watch for falling objects',
+    'Cover & Hold On': 'Cover & Hold On',
+    'Take cover under a sturdy piece of furniture and hold on until the shaking stops':
+        'Take cover under a sturdy piece of furniture and hold on until the shaking stops',
+    'Secure an exit': 'Secure an exit',
+    'Once shaking stops, open a door and move calmly, protecting your head':
+        'Once shaking stops, open a door and move calmly, protecting your head',
+    'Evacuate safely': 'Evacuate safely',
+    'Use the stairs, not elevators, and head to a safe assembly point':
+        'Use the stairs, not elevators, and head to a safe assembly point',
+    'If you are outdoors': 'If you are outdoors',
+    'Move away from buildings, power lines, and signs to an open area, and protect your head':
+        'Move away from buildings, power lines, and signs to an open area, and protect your head',
+    'Pack emergency supplies': 'Pack emergency supplies',
+    'Gather water, food, and essentials in a bag before water rises':
+        'Gather water, food, and essentials in a bag before water rises',
+    'Call 119': 'Call 119',
+    'Call 119 to report flooding and ask for help if you are in danger':
+        'Call 119 to report flooding and ask for help if you are in danger',
+    'Move to high ground': 'Move to high ground',
+    'Move to higher floors or ground immediately and stay away from submerged cars':
+        'Move to higher floors or ground immediately and stay away from submerged cars',
+    'Go to a shelter': 'Go to a shelter',
+    'Head to a designated shelter and never cross flooded roads or bridges':
+        'Head to a designated shelter and never cross flooded roads or bridges',
+    'Sound the alarm': 'Sound the alarm',
+    'If you see a fire, press the alarm and shout to alert others nearby':
+        'If you see a fire, press the alarm and shout to alert others nearby',
+    'Call for help': 'Call for help',
+    'Call 119 (fire department) and report the location clearly':
+        'Call 119 (fire department) and report the location clearly',
+    'Stay low, cover your nose': 'Stay low, cover your nose',
+    'Cover your nose and mouth with a cloth and stay low to avoid smoke':
+        'Cover your nose and mouth with a cloth and stay low to avoid smoke',
+    'Use the stairs': 'Use the stairs',
+    'NEVER use elevators-take the stairs and evacuate to a safe place outside':
+        'NEVER use elevators-take the stairs and evacuate to a safe place outside',
   };
 }
