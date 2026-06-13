@@ -6,9 +6,10 @@ import 'pages/alerts/alerts_page.dart';
 import 'pages/embassy/embassy_page.dart';
 import 'pages/settings/settings_page.dart';
 import 'providers/language_provider.dart';         // 🆕
-
+import 'services/alert_service.dart'; // ← 추가
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  AlertService.clearCache(); // ← 이 줄 추가
   await UserSession.init();
 
   // 🆕 저장된 언어 미리 로드

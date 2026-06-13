@@ -27,19 +27,30 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    _lastLang = context.read<LanguageProvider>().currentLang;
-    _fetchAlerts();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final lang = context.read<LanguageProvider>();
+      _lastLang = lang.currentLang;
+      lang.addListener(_onLangChanged);
+      _fetchAlerts();
+    });
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final currentLang = context.read<LanguageProvider>().currentLang;
-    if (_lastLang != currentLang && _lastLang.isNotEmpty) {
+  void dispose() {
+    try {
+      context.read<LanguageProvider>().removeListener(_onLangChanged);
+    } catch (_) {}
+    super.dispose();
+  }
+
+  void _onLangChanged() {
+    if (!mounted) return;
+    final provider = context.read<LanguageProvider>();
+    final currentLang = provider.currentLang;
+    if (_lastLang != currentLang) {
       _lastLang = currentLang;
       _fetchAlerts();
-    } else {
-      _lastLang = currentLang;
     }
   }
 
