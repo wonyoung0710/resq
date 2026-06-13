@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/language_provider.dart';
 import '../../core/user_session.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../services/alert_service.dart';
 import 'qr_result_screen.dart';
 import '../screens/call119.dart';
@@ -47,6 +48,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void _onLangChanged() {
     if (!mounted) return;
     final provider = context.read<LanguageProvider>();
+    if (provider.isLoading) return; // 언어 변경 중 notifyListeners 무시
     final currentLang = provider.currentLang;
     if (_lastLang != currentLang) {
       _lastLang = currentLang;
@@ -77,8 +79,12 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _fetchAlerts() async {
     setState(() { _isLoading = true; _isTranslating = true; });
     try {
+      final prefs = await SharedPreferences.getInstance();
+      final regionCode = prefs.getString('setting_region') ?? 'ALL';
+
       await AlertService.fetchAlertsWithCallback(
         lang: _lastLang,
+        regionCode: regionCode == 'ALL' ? null : regionCode,
         onUpdate: (alerts) {
           if (!mounted) return;
           alerts.sort((a, b) => b.issuedAt.compareTo(a.issuedAt));

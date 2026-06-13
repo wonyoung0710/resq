@@ -113,8 +113,9 @@ class AppStrings {
     'alerts_connection_error': 'Cannot connect to server.',
     'alerts_empty':            'No alerts found.',
     'retry':                   'Retry',
-
-    // ===== Safety Guide =====
+    // Safety Guide
+    'Safety Guide': 'Safety Guide',
+    'What to do in an emergency': 'What to do in an emergency',
     'guide_earthquake': 'Earthquake',
     'guide_rain': 'Heavy Rain & Flood',
     'guide_fire': 'Fire',
@@ -157,5 +158,27 @@ class AppStrings {
     'Use the stairs': 'Use the stairs',
     'NEVER use elevators-take the stairs and evacuate to a safe place outside':
         'NEVER use elevators-take the stairs and evacuate to a safe place outside',
+    // Region
+    'select_region': 'Select Region',
+    'select_region_sub': 'Show alerts for selected area only',
+    'region_all': 'All Regions',
+    'region_seoul': 'Seoul',
+    'region_busan': 'Busan',
+    'region_daegu': 'Daegu',
+    'region_incheon': 'Incheon',
+    'region_gwangju': 'Gwangju',
+    'region_daejeon': 'Daejeon',
+    'region_ulsan': 'Ulsan',
+    'region_sejong': 'Sejong',
+    'region_gyeonggi': 'Gyeonggi',
+    'region_gangwon': 'Gangwon',
+    'region_chungbuk': 'Chungbuk',
+    'region_chungnam': 'Chungnam',
+    'region_cheonan': 'Cheonan',
+    'region_jeonbuk': 'Jeonbuk',
+    'region_jeonnam': 'Jeonnam',
+    'region_gyeongbuk': 'Gyeongbuk',
+    'region_gyeongnam': 'Gyeongnam',
+    'region_jeju': 'Jeju',
   };
 }

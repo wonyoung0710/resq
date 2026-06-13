@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/language_provider.dart';
 import '../../services/alert_service.dart';
 
@@ -45,7 +46,6 @@ class _AlertsPageState extends State<AlertsPage> {
       if (!mounted) return;
       final lang = context.read<LanguageProvider>();
       _lastLang = lang.currentLang;
-      // 언어 변경 감지: LanguageProvider 직접 리스닝
       lang.addListener(_onLangChanged);
       _loadAll(_lastLang);
     });
@@ -53,7 +53,6 @@ class _AlertsPageState extends State<AlertsPage> {
 
   @override
   void dispose() {
-    // 리스너 제거
     try {
       context.read<LanguageProvider>().removeListener(_onLangChanged);
     } catch (_) {}
@@ -63,7 +62,6 @@ class _AlertsPageState extends State<AlertsPage> {
   void _onLangChanged() {
     if (!mounted) return;
     final provider = context.read<LanguageProvider>();
-    // isLoading 중엔 무시 (언어 변경 중 notifyListeners 무시)
     if (provider.isLoading) return;
     final currentLang = provider.currentLang;
     if (_lastLang != currentLang) {
@@ -75,6 +73,7 @@ class _AlertsPageState extends State<AlertsPage> {
   Future<void> _loadAll([String? langOverride]) async {
     final lang = langOverride ?? _lastLang;
     if (!mounted) return;
+
     setState(() {
       _error = null;
       _isLoading = _alerts.isEmpty;
@@ -82,8 +81,13 @@ class _AlertsPageState extends State<AlertsPage> {
     });
 
     try {
+      // 저장된 지역 설정 읽기
+      final prefs = await SharedPreferences.getInstance();
+      final regionCode = prefs.getString('setting_region') ?? 'ALL';
+
       await AlertService.fetchAlertsWithCallback(
         lang: lang,
+        regionCode: regionCode == 'ALL' ? null : regionCode,
         onUpdate: (alerts) {
           if (!mounted || _lastLang != lang) return;
           setState(() {
@@ -100,7 +104,7 @@ class _AlertsPageState extends State<AlertsPage> {
       });
     }
 
-if (mounted) setState(() => _isTranslating = false);
+    if (mounted) setState(() => _isTranslating = false);
   }
 
   List<AlertModel> get _filtered {
@@ -275,31 +279,24 @@ class _FilterBarState extends State<_FilterBar> {
       padding: const EdgeInsets.symmetric(vertical: 12),
       child: Row(
         children: [
-          // 왼쪽 화살표
           AnimatedOpacity(
             opacity: _canScrollLeft ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 200),
             child: GestureDetector(
               onTap: _canScrollLeft ? _scrollLeft : null,
               child: Container(
-                width: 28,
-                height: 36,
+                width: 28, height: 36,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 4,
-                      offset: const Offset(2, 0),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 4, offset: const Offset(2, 0),
+                  )],
                 ),
                 child: const Icon(Icons.chevron_left, size: 20, color: kNavy),
               ),
             ),
           ),
-
-          // 필터 칩 목록
           Expanded(
             child: SingleChildScrollView(
               controller: _scrollController,
@@ -314,10 +311,8 @@ class _FilterBarState extends State<_FilterBar> {
                       label: widget.lang.t(cat.labelKey),
                       selected: isSelected,
                       activeColor: cat.code == 'ALL'
-                          ? kNavy
-                          : cat.color.withValues(alpha: 0.15),
-                      activeTextColor:
-                          cat.code == 'ALL' ? Colors.white : cat.color,
+                          ? kNavy : cat.color.withValues(alpha: 0.15),
+                      activeTextColor: cat.code == 'ALL' ? Colors.white : cat.color,
                       onTap: () => widget.onSelected(cat.code),
                     ),
                   );
@@ -325,25 +320,19 @@ class _FilterBarState extends State<_FilterBar> {
               ),
             ),
           ),
-
-          // 오른쪽 화살표
           AnimatedOpacity(
             opacity: _canScrollRight ? 1.0 : 0.0,
             duration: const Duration(milliseconds: 200),
             child: GestureDetector(
               onTap: _canScrollRight ? _scrollRight : null,
               child: Container(
-                width: 28,
-                height: 36,
+                width: 28, height: 36,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withValues(alpha: 0.08),
-                      blurRadius: 4,
-                      offset: const Offset(-2, 0),
-                    ),
-                  ],
+                  boxShadow: [BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.08),
+                    blurRadius: 4, offset: const Offset(-2, 0),
+                  )],
                 ),
                 child: const Icon(Icons.chevron_right, size: 20, color: kNavy),
               ),
@@ -405,10 +394,9 @@ class _AlertCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border(left: BorderSide(color: borderColor, width: 4)),
-        boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 6, offset: const Offset(0, 2)),
-        ],
+        boxShadow: [BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 6, offset: const Offset(0, 2))],
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

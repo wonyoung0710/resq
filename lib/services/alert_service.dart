@@ -119,7 +119,7 @@ class AlertService {
       try {
         final uri = Uri.parse(
           'https://translate.googleapis.com/translate_a/single'
-          '?client=gtx&sl=auto&tl=$targetLang&dt=t'
+          '?client=gtx&sl=ko&tl=$targetLang&dt=t'
           '&q=${Uri.encodeComponent(text)}',
         );
         final res = await http.get(uri).timeout(const Duration(seconds: 10));
@@ -144,12 +144,12 @@ class AlertService {
   /// 알림 목록 조회 + 번역 (배치마다 콜백으로 즉시 업데이트)
   static Future<void> fetchAlertsWithCallback({
     String lang = 'en',
-    String? regionCode,
+    String? regionCode,   // 지역 코드 (SEOUL, BUSAN 등 / null이면 전체)
     String? categoryCode,
     String? status,
     required void Function(List<AlertModel>) onUpdate,
   }) async {
-    // ← lang 파라미터 서버에 보내지 않음 (항상 원본 받기)
+    // region_code 파라미터로 지역 필터링
     final params = <String, String>{};
     if (regionCode   != null) params['region_code']   = regionCode;
     if (categoryCode != null) params['category_code'] = categoryCode;

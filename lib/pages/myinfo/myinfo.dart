@@ -21,7 +21,7 @@ class QrResultPage extends StatelessWidget {
           children: [
             Text('Emergency Info',
                 style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-            Text('Scanned from SafeKorea',
+            Text('Scanned from ResQ',
                 style: TextStyle(color: Colors.white60, fontSize: 11)),
           ],
         ),
