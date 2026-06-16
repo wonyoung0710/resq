@@ -607,6 +607,53 @@ class _EditSheetState extends State<_EditSheet> {
     });
   }
 
+  // ── 초기화(Reset All) ──────────────────────────────────────
+  Future<void> _confirmResetAll() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Reset All Info'),
+        content: const Text('All information you entered will be cleared. Continue?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Reset', style: TextStyle(color: Color(0xFFC94A4A))),
+          ),
+        ],
+      ),
+    );
+    if (confirmed == true) _resetAll();
+  }
+
+  void _resetAll() {
+    setState(() {
+      _nameCtrl.clear();
+      _nationalityCtrl.clear();
+      _ageCtrl.clear();
+      _gender = 'male';
+      _bloodType = 'A+';
+
+      for (final c in _contacts) {
+        c.values.forEach((ctrl) => ctrl.dispose());
+      }
+      _contacts.clear();
+
+      for (final a in _allergies) {
+        a['value']!.dispose();
+      }
+      _allergies.clear();
+
+      for (final c in _conditions) {
+        c['value']!.dispose();
+      }
+      _conditions.clear();
+    });
+  }
+
   Future<void> _save() async {
     if (_nameCtrl.text.trim().isEmpty) return;
     setState(() => _isSaving = true);
@@ -676,8 +723,25 @@ class _EditSheetState extends State<_EditSheet> {
               decoration: BoxDecoration(color: const Color(0xFFE2E8F0), borderRadius: BorderRadius.circular(2)),
             )),
             const SizedBox(height: 20),
-            Text(lang.t('edit_my_info'),
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: kTextNavy)),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(lang.t('edit_my_info'),
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: kTextNavy)),
+                GestureDetector(
+                  onTap: _confirmResetAll,
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.restart_alt, size: 16, color: Color(0xFFC94A4A)),
+                      SizedBox(width: 4),
+                      Text('Reset All',
+                          style: TextStyle(color: Color(0xFFC94A4A), fontSize: 13, fontWeight: FontWeight.w700)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: 20),
 
             // ── 기본 정보 ──────────────────────────────────────
