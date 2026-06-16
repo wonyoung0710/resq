@@ -5,8 +5,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../providers/language_provider.dart';
 import '../../core/user_session.dart';
 import '../../core/api_client.dart';
-import 'package:url_launcher/url_launcher.dart';
-
 
 const Color kNavy = Color(0xFF243F73);
 const Color kTextNavy = Color(0xFF152A5C);
@@ -120,8 +118,16 @@ class _QrResultScreenState extends State<QrResultScreen> {
   Future<void> _fetchProfile() async {
     setState(() => _isLoading = true);
 
-    // 1. 로컬 캐시 먼저
     final prefs = await SharedPreferences.getInstance();
+
+    // 삭제한 적 있으면 서버 호출 안 함
+    final isDeleted = prefs.getBool('qr_deleted') ?? false;
+    if (isDeleted) {
+      setState(() { _hasProfile = false; _isLoading = false; });
+      return;
+    }
+
+    // 1. 로컬 캐시 먼저
     final localData = prefs.getString('qr_profile');
     if (localData != null) {
       try {
@@ -155,6 +161,50 @@ class _QrResultScreenState extends State<QrResultScreen> {
       });
     } catch (_) {
       setState(() { _hasProfile = false; _isLoading = false; });
+    }
+  }
+
+  Future<void> _deleteProfile() async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Profile'),
+        content: const Text('All emergency info will be deleted. Continue?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Delete', style: TextStyle(color: Color(0xFFC94A4A))),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+
+    // 로컬 캐시 삭제 + deleted 플래그 저장
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('qr_profile');
+    await prefs.setBool('qr_deleted', true);
+
+    // 서버에 빈 프로필 저장 (삭제 대신)
+    final userId = UserSession.userId;
+    if (userId != null) {
+      try {
+        await ApiClient.post('/users/$userId/qr-profile', {
+          'name': '', 'gender': '', 'age': 0, 'blood_type': '',
+          'nationality': '', 'emergency_contacts': [], 'medical_infos': [],
+        });
+      } catch (_) {}
+    }
+
+    if (mounted) {
+      setState(() {
+        _profile = null;
+        _hasProfile = false;
+      });
     }
   }
 
@@ -201,6 +251,7 @@ class _QrResultScreenState extends State<QrResultScreen> {
                           profile: _profile!,
                           lang: lang,
                           onEdit: () => _openEditSheet(context),
+                          onDelete: _deleteProfile,
                         )
                       : _EmptyView(
                           lang: lang,
@@ -307,8 +358,9 @@ class _ProfileView extends StatelessWidget {
   final QrProfile profile;
   final LanguageProvider lang;
   final VoidCallback onEdit;
+  final VoidCallback onDelete;
 
-  const _ProfileView({required this.profile, required this.lang, required this.onEdit});
+  const _ProfileView({required this.profile, required this.lang, required this.onEdit, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
@@ -418,46 +470,46 @@ class _ProfileView extends StatelessWidget {
               ),
             ),
           ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: onDelete,
+              icon: const Icon(Icons.delete_outline, color: Color(0xFFC94A4A), size: 18),
+              label: const Text('Delete Profile',
+                  style: TextStyle(color: Color(0xFFC94A4A), fontSize: 16, fontWeight: FontWeight.w900)),
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                side: const BorderSide(color: Color(0xFFC94A4A)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-Widget _contactRow(EmergencyContact c) {
-  return Row(children: [
-    Expanded(
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(c.name,
-            style: const TextStyle(
-                color: kTextNavy, fontSize: 15, fontWeight: FontWeight.w900)),
+  Widget _contactRow(EmergencyContact c) {
+    return Row(children: [
+      Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(c.name, style: const TextStyle(color: kTextNavy, fontSize: 15, fontWeight: FontWeight.w900)),
         const SizedBox(height: 3),
         Text('${c.relationship} · ${c.phone}',
-            style: const TextStyle(
-                color: Color(0xFF8B92CF), fontSize: 12, fontWeight: FontWeight.w700)),
-      ]),
-    ),
-    GestureDetector(                              // ← 추가
-      onTap: () async {
-        final uri = Uri(scheme: 'tel', path: c.phone);
-        if (await canLaunchUrl(uri)) {
-          await launchUrl(uri);
-        }
-      },
-      child: Container(
+            style: const TextStyle(color: Color(0xFF8B92CF), fontSize: 12, fontWeight: FontWeight.w700)),
+      ])),
+      Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-        decoration: BoxDecoration(
-            color: kNavy, borderRadius: BorderRadius.circular(9)),
+        decoration: BoxDecoration(color: kNavy, borderRadius: BorderRadius.circular(9)),
         child: const Row(children: [
           Icon(Icons.call, color: Colors.white, size: 15),
           SizedBox(width: 5),
-          Text('Call',
-              style: TextStyle(
-                  color: Colors.white, fontSize: 13, fontWeight: FontWeight.w900)),
+          Text('Call', style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.w900)),
         ]),
       ),
-    ),
-  ]);
-}
+    ]);
+  }
+
   Widget _infoBox({required String title, required String value, required Color valueColor}) {
     return Container(
       height: 82, padding: const EdgeInsets.all(14),
@@ -607,53 +659,6 @@ class _EditSheetState extends State<_EditSheet> {
     });
   }
 
-  // ── 초기화(Reset All) ──────────────────────────────────────
-  Future<void> _confirmResetAll() async {
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text('Reset All Info'),
-        content: const Text('All information you entered will be cleared. Continue?'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            child: const Text('Reset', style: TextStyle(color: Color(0xFFC94A4A))),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true) _resetAll();
-  }
-
-  void _resetAll() {
-    setState(() {
-      _nameCtrl.clear();
-      _nationalityCtrl.clear();
-      _ageCtrl.clear();
-      _gender = 'male';
-      _bloodType = 'A+';
-
-      for (final c in _contacts) {
-        c.values.forEach((ctrl) => ctrl.dispose());
-      }
-      _contacts.clear();
-
-      for (final a in _allergies) {
-        a['value']!.dispose();
-      }
-      _allergies.clear();
-
-      for (final c in _conditions) {
-        c['value']!.dispose();
-      }
-      _conditions.clear();
-    });
-  }
-
   Future<void> _save() async {
     if (_nameCtrl.text.trim().isEmpty) return;
     setState(() => _isSaving = true);
@@ -689,8 +694,9 @@ class _EditSheetState extends State<_EditSheet> {
       'medical_infos': medicalData,
     };
 
-    // 로컬 저장 (항상)
+    // 로컬 저장 (항상) + deleted 플래그 제거
     final prefs = await SharedPreferences.getInstance();
+    await prefs.remove('qr_deleted');
     await prefs.setString('qr_profile', jsonEncode(profileData));
 
     // 서버 저장 시도
@@ -723,25 +729,8 @@ class _EditSheetState extends State<_EditSheet> {
               decoration: BoxDecoration(color: const Color(0xFFE2E8F0), borderRadius: BorderRadius.circular(2)),
             )),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(lang.t('edit_my_info'),
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: kTextNavy)),
-                GestureDetector(
-                  onTap: _confirmResetAll,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: const [
-                      Icon(Icons.restart_alt, size: 16, color: Color(0xFFC94A4A)),
-                      SizedBox(width: 4),
-                      Text('Reset All',
-                          style: TextStyle(color: Color(0xFFC94A4A), fontSize: 13, fontWeight: FontWeight.w700)),
-                    ],
-                  ),
-                ),
-              ],
-            ),
+            Text(lang.t('edit_my_info'),
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w900, color: kTextNavy)),
             const SizedBox(height: 20),
 
             // ── 기본 정보 ──────────────────────────────────────
